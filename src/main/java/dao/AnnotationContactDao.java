@@ -6,6 +6,7 @@ import dao.interfaces.ContactDAO;
 import dao.queries.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -16,6 +17,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
@@ -35,6 +37,15 @@ public class AnnotationContactDao implements ContactDAO {
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
         this.template = new NamedParameterJdbcTemplate(dataSource);
+    }
+
+    @PostConstruct
+    public void init(){
+        if(dataSource == null){
+            throw new BeanCreationException("DataSource is null");
+        } else {
+            LOG.info("DataSource ready");
+        }
     }
 
     @Override
